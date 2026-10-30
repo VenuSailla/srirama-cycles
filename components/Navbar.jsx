@@ -1666,28 +1666,32 @@ export default function Navbar() {
           .nav-cart-btn {
             display: none !important;
           }
+          .nav-cart-btn.has-items,
+          .nav-cart-btn.is-shop-page {
+            display: inline-flex !important;
+          }
           .mobile-hamburger-btn {
             display: inline-flex !important;
           }
           .navbar-container {
-            height: 68px !important;
+            height: 76px !important;
             padding: 0 16px !important;
           }
           .navbar-logo {
-            height: 44px !important;
-            max-height: 44px !important;
-            max-width: 160px !important;
+            height: 56px !important;
+            max-height: 56px !important;
+            max-width: 190px !important;
           }
         }
-        @media (max-width: 375px) {
+        @media (max-width: 425px) {
           .navbar-container {
             padding: 0 12px !important;
-            height: 62px !important;
+            height: 70px !important;
           }
           .navbar-logo {
-            height: 38px !important;
-            max-height: 38px !important;
-            max-width: 140px !important;
+            height: 50px !important;
+            max-height: 50px !important;
+            max-width: 175px !important;
           }
           .mobile-hamburger-btn {
             width: 40px !important;

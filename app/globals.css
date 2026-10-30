@@ -234,17 +234,18 @@ input, textarea, select {
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
-  height: 86px;
+  height: 90px;
   padding: 0 16px;
   gap: 20px;
 }
 
 .navbar-logo {
-  height: 68px;
-  max-height: 68px;
+  height: 78px;
+  max-height: 78px;
   width: auto;
   object-fit: contain;
   display: block;
+  transition: transform 0.2s ease;
 }
 
 .navbar-right-actions {
@@ -362,16 +363,16 @@ input, textarea, select {
     display: none !important;
   }
 
-  /* Requirement 4: Place logo on the left and hamburger icon on the right */
+  /* Logo on the left and actions on the right */
   .navbar-container {
-    height: 68px !important;
+    height: 76px !important;
     padding: 0 16px !important;
     box-sizing: border-box !important;
   }
   .navbar-logo {
-    height: 44px !important;
-    max-height: 44px !important;
-    max-width: 160px !important;
+    height: 56px !important;
+    max-height: 56px !important;
+    max-width: 190px !important;
     width: auto !important;
     object-fit: contain !important;
   }
@@ -432,13 +433,13 @@ input, textarea, select {
 /* Extra-small screens (<= 425px & <= 375px) */
 @media (max-width: 425px) {
   .navbar-container {
-    height: 64px !important;
+    height: 70px !important;
     padding: 0 12px !important;
   }
   .navbar-logo {
-    height: 38px !important;
-    max-height: 38px !important;
-    max-width: 140px !important;
+    height: 50px !important;
+    max-height: 50px !important;
+    max-width: 175px !important;
   }
   .mobile-hamburger-btn {
     width: 40px !important;
