@@ -13,6 +13,7 @@ import {
   Calendar,
   CreditCard,
   Check,
+  Loader2,
 } from 'lucide-react';
 
 function TrackOrderContent() {
@@ -152,7 +153,10 @@ function TrackOrderContent() {
               style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 700 }}
             >
               {loading ? (
-                'Verifying Credentials with MongoDB...'
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                  <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                  <span>Checking Order Status...</span>
+                </span>
               ) : (
                 <>
                   <Search size={18} />

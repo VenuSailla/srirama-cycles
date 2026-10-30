@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Clock,
   Package,
+  Loader2,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -139,7 +140,7 @@ export default function CheckoutPage() {
               Thank You for Your Order!
             </h1>
             <p style={{ color: 'var(--secondary-text)', fontSize: '1rem', lineHeight: 1.6, marginBottom: '28px' }}>
-              Your bicycle order has been saved successfully in our MongoDB system. Our team at Kazipet will inspect and prepare your cycle for dispatch.
+              Your bicycle order has been confirmed successfully! Our team at Kazipet will inspect and prepare your cycle for dispatch.
             </p>
 
             <div
@@ -512,7 +513,14 @@ export default function CheckoutPage() {
                     fontWeight: 700,
                   }}
                 >
-                  {submitting ? 'Placing Order in MongoDB...' : 'Place Order (Cash on Delivery)'}
+                  {submitting ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                      <span>Placing Order...</span>
+                    </span>
+                  ) : (
+                    'Place Order (Cash on Delivery)'
+                  )}
                 </button>
 
                 <div style={{ marginTop: '16px', fontSize: '0.78rem', color: 'var(--secondary-text)', textAlign: 'center' }}>

@@ -11,6 +11,7 @@ import {
   CheckCircle,
   AlertCircle,
   MessageCircle,
+  Loader2,
 } from 'lucide-react';
 
 export default function ContactUsPage() {
@@ -387,7 +388,10 @@ export default function ContactUsPage() {
                   style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 700 }}
                 >
                   {submitting ? (
-                    'Saving Enquiry to MongoDB...'
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+                      <span>Sending Message...</span>
+                    </span>
                   ) : (
                     <>
                       <Send size={18} />
