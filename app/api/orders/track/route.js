@@ -88,6 +88,13 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('Track order error:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          'Unable to reach showroom tracking system right now. Please verify your Order ID or call our helpline at +91 95736 53194.',
+      },
+      { status: 500 }
+    );
   }
 }

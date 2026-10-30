@@ -3,13 +3,24 @@ import mongoose from 'mongoose';
 import connectToDatabase from '@/lib/mongodb';
 import Product from '@/models/Product';
 import { requireAdmin } from '@/lib/auth';
+import { defaultProducts } from '@/lib/catalogData';
 
 export const dynamic = 'force-dynamic';
 
+function getFallbackProduct(id) {
+  const found = defaultProducts.find((p) => p._id === id || p.slug === id);
+  if (!found) return null;
+  const related = defaultProducts
+    .filter((p) => p.category === found.category && p._id !== found._id)
+    .slice(0, 4);
+  return { product: found, related };
+}
+
 export async function GET(request, { params }) {
+  const { id } = params;
+
   try {
     await connectToDatabase();
-    const { id } = params;
 
     let product = null;
     if (mongoose.Types.ObjectId.isValid(id)) {
@@ -20,6 +31,10 @@ export async function GET(request, { params }) {
     }
 
     if (!product) {
+      const fallback = getFallbackProduct(id);
+      if (fallback) {
+        return NextResponse.json({ success: true, ...fallback });
+      }
       return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
     }
 
@@ -31,8 +46,12 @@ export async function GET(request, { params }) {
 
     return NextResponse.json({ success: true, product, related });
   } catch (error) {
-    console.error('Error getting product details:', error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    console.warn('Error querying product by ID from DB, checking fallback catalog:', error.message);
+    const fallback = getFallbackProduct(id);
+    if (fallback) {
+      return NextResponse.json({ success: true, ...fallback });
+    }
+    return NextResponse.json({ success: false, error: 'Product not found' }, { status: 404 });
   }
 }
 
