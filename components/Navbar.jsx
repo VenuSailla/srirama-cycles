@@ -716,24 +716,26 @@ export default function Navbar() {
               </svg>
             </a>
 
-            {/* Mobile Menu Hamburger Toggle (☰) */}
+            {/* Mobile Menu Hamburger Toggle Button with 3 Horizontal Lines (☰) */}
             <button
               ref={hamburgerBtnRef}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu (☰)'}
               aria-expanded={mobileMenuOpen}
-              className="mobile-hamburger-btn"
-              style={{
-                borderRadius: '10px',
-                backgroundColor: mobileMenuOpen ? '#EA580C' : '#FFF7ED',
-                color: mobileMenuOpen ? '#FFFFFF' : '#EA580C',
-                border: mobileMenuOpen ? '1.5px solid #EA580C' : '1.5px solid #FED7AA',
-                cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(249, 115, 22, 0.12)',
-                transition: 'all 0.18s ease',
-              }}
+              className={`mobile-hamburger-btn ${mobileMenuOpen ? 'is-active' : ''}`}
             >
-              {mobileMenuOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
+              {mobileMenuOpen ? (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              ) : (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -1649,31 +1651,35 @@ export default function Navbar() {
           .nav-auth-btn {
             display: none !important;
           }
+          .nav-cart-btn {
+            display: none !important;
+          }
           .mobile-hamburger-btn {
             display: inline-flex !important;
           }
           .navbar-container {
             height: 68px !important;
-            padding: 0 12px !important;
+            padding: 0 16px !important;
           }
           .navbar-logo {
-            height: 42px !important;
-            max-height: 42px !important;
-            max-width: 155px !important;
+            height: 44px !important;
+            max-height: 44px !important;
+            max-width: 160px !important;
           }
         }
-        @media (max-width: 425px) {
+        @media (max-width: 375px) {
           .navbar-container {
-            padding: 0 10px !important;
-            height: 64px !important;
+            padding: 0 12px !important;
+            height: 62px !important;
           }
           .navbar-logo {
             height: 38px !important;
             max-height: 38px !important;
-            max-width: 135px !important;
+            max-width: 140px !important;
           }
-          .nav-btn-text {
-            display: none !important;
+          .mobile-hamburger-btn {
+            width: 40px !important;
+            height: 40px !important;
           }
         }
       `}</style>
