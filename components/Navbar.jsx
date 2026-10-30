@@ -20,6 +20,10 @@ import {
   ArrowRight,
   Check,
   Loader2,
+  Home,
+  Award,
+  Truck,
+  MessageCircle,
 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -41,6 +45,8 @@ export default function Navbar() {
 
   const searchRef = useRef(null);
   const mobileSearchRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+  const hamburgerBtnRef = useRef(null);
 
   // Do not show public navbar on admin dashboard pages
   const isAdminPage = pathname.startsWith('/admin');
@@ -63,7 +69,7 @@ export default function Navbar() {
     setSearchFocused(false);
   }, [pathname]);
 
-  // Click outside listener for search dropdown
+  // Click outside listener for search dropdown and mobile navigation menu
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -74,10 +80,36 @@ export default function Navbar() {
       ) {
         setSearchFocused(false);
       }
+
+      // Close mobile menu if clicked outside both the menu and the hamburger toggle
+      if (
+        mobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target) &&
+        hamburgerBtnRef.current &&
+        !hamburgerBtnRef.current.contains(event.target)
+      ) {
+        setMobileMenuOpen(false);
+      }
     }
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setCartDrawerOpen(false);
+        setSearchFocused(false);
+      }
+    }
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('touchstart', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   // Debounced live matching product search
   useEffect(() => {
@@ -134,11 +166,11 @@ export default function Navbar() {
   }
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Shop', href: '/shop' },
-    { name: 'About Us', href: '/about' },
-    { name: 'Track Order', href: '/track-order' },
-    { name: 'Contact Us', href: '/contact', isContact: true },
+    { name: 'Home', href: '/', icon: Home, subtitle: 'Official Showroom Homepage' },
+    { name: 'Shop', href: '/shop', icon: Package, subtitle: 'Bicycles & Auto Spares' },
+    { name: 'About Us', href: '/about', icon: Award, subtitle: '50-Year Golden Jubilee' },
+    { name: 'Track Order', href: '/track-order', icon: Truck, subtitle: 'Live 7-Stage Tracker' },
+    { name: 'Contact Us', href: '/contact', icon: Phone, subtitle: 'Kazipet Store & Workshop', isContact: true },
   ];
 
   return (
@@ -204,12 +236,13 @@ export default function Navbar() {
         </div>
 
         {/* Main Navbar */}
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '86px', padding: '0 16px', gap: '20px' }}>
+        <div className="container navbar-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '86px', padding: '0 16px', gap: '20px' }}>
           {/* Official Logo (Enlarged & Crisp) */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
             <img
               src="/logo.png"
               alt="Sri Rama Cycle Store & Auto Spares"
+              className="navbar-logo"
               style={{
                 height: '68px',
                 width: 'auto',
@@ -571,7 +604,7 @@ export default function Navbar() {
               }}
             >
               <ShoppingBag size={15} strokeWidth={2.4} color="#EA580C" />
-              <span>Cart</span>
+              <span className="nav-btn-text">Cart</span>
               <span
                 style={{
                   backgroundColor: 'var(--primary-orange)',
@@ -621,7 +654,7 @@ export default function Navbar() {
                 }}
               >
                 <User size={15} />
-                <span style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span className="nav-btn-text" style={{ maxWidth: '90px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user.name.split(' ')[0]}
                 </span>
               </Link>
@@ -644,15 +677,16 @@ export default function Navbar() {
                 }}
               >
                 <User size={16} strokeWidth={2.2} />
-                <span>Sign In</span>
+                <span className="nav-btn-text">Sign In</span>
               </Link>
             ) : null}
 
-            {/* WhatsApp Support Pill Button */}
+            {/* WhatsApp Support Pill Button (Visible on Desktop, shown in mobile menu on small screens) */}
             <a
               href="https://wa.me/919573653194?text=Hello%20Sri%20Rama%20Cycles,%20I%20need%20support%20with%20a%20bicycle."
               target="_blank"
               rel="noopener noreferrer"
+              className="desktop-support-btn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -689,47 +723,167 @@ export default function Navbar() {
               </svg>
             </a>
 
-            {/* Mobile Menu Hamburger Toggle */}
+            {/* Mobile Menu Hamburger Toggle (☰) */}
             <button
+              ref={hamburgerBtnRef}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle Navigation Menu"
+              aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu (☰)'}
+              aria-expanded={mobileMenuOpen}
+              className="mobile-hamburger-btn"
               style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '8px',
-                display: 'flex',
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                display: 'none',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#F5F5F4',
-                color: 'var(--primary-text)',
-                border: 'none',
+                backgroundColor: mobileMenuOpen ? '#EA580C' : '#FFF7ED',
+                color: mobileMenuOpen ? '#FFFFFF' : '#EA580C',
+                border: mobileMenuOpen ? '1.5px solid #EA580C' : '1.5px solid #FED7AA',
                 cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(249, 115, 22, 0.12)',
+                transition: 'all 0.18s ease',
+                flexShrink: 0,
               }}
-              className="mobile-hamburger"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileMenuOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Menu Backdrop Overlay (Clicking outside closes menu) */}
         {mobileMenuOpen && (
           <div
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu backdrop"
+            className="mobile-menu-backdrop"
             style={{
+              position: 'fixed',
+              inset: 0,
+              backgroundColor: 'rgba(15, 23, 42, 0.45)',
+              backdropFilter: 'blur(3px)',
+              zIndex: 89,
+              animation: 'fadeIn 0.2s ease',
+            }}
+          />
+        )}
+
+        {/* Responsive Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div
+            ref={mobileMenuRef}
+            className="mobile-nav-drawer"
+            style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
               backgroundColor: '#FFFFFF',
-              borderTop: '1px solid var(--border-color)',
-              padding: '20px',
-              boxShadow: 'var(--shadow-md)',
+              borderTop: '1px solid #FED7AA',
+              borderBottom: '3px solid #EA580C',
+              boxShadow: '0 16px 36px rgba(0, 0, 0, 0.16)',
+              zIndex: 95,
+              maxHeight: 'calc(100vh - 86px)',
+              overflowY: 'auto',
+              padding: '16px 18px 24px',
+              animation: 'slideDownMobile 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
           >
+            {/* Quick Customer Profile / Sign In Banner in Mobile Menu */}
+            <div
+              style={{
+                backgroundColor: '#FFF7ED',
+                borderRadius: '12px',
+                border: '1.5px solid #FED7AA',
+                padding: '12px 14px',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '10px',
+              }}
+            >
+              {user ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div
+                    style={{
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      backgroundColor: '#EA580C',
+                      color: '#FFFFFF',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 800,
+                      fontSize: '0.86rem',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {user.name.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, color: '#1E293B', fontSize: '0.88rem' }}>
+                      {user.name}
+                    </div>
+                    <div style={{ fontSize: '0.74rem', color: '#64748B' }}>{user.email}</div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <User size={18} color="#EA580C" />
+                  <span style={{ fontSize: '0.86rem', fontWeight: 750, color: '#1E293B' }}>
+                    Welcome to Sri Rama Cycles!
+                  </span>
+                </div>
+              )}
+
+              {user ? (
+                <Link
+                  href="/account"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #FED7AA',
+                    color: '#EA580C',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    fontWeight: 750,
+                    textDecoration: 'none',
+                  }}
+                >
+                  My Account →
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    backgroundColor: '#EA580C',
+                    color: '#FFFFFF',
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    fontSize: '0.8rem',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                    boxShadow: '0 2px 6px rgba(234, 88, 12, 0.25)',
+                  }}
+                >
+                  Sign In
+                </Link>
+              )}
+            </div>
+
             {/* Mobile Live Search Bar */}
             <div ref={mobileSearchRef} style={{ position: 'relative', marginBottom: '16px' }}>
               <form onSubmit={handleSearchSubmit}>
                 <div style={{ position: 'relative' }}>
                   <Search
                     size={16}
-                    color="var(--secondary-text)"
-                    style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }}
+                    color="#64748B"
+                    style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}
                   />
                   <input
                     type="text"
@@ -738,25 +892,49 @@ export default function Navbar() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                     style={{
                       width: '100%',
-                      padding: '10px 12px 10px 36px',
-                      borderRadius: 'var(--radius-md)',
-                      border: '1.5px solid var(--border-color)',
-                      fontSize: '0.9rem',
+                      padding: '10px 14px 10px 38px',
+                      borderRadius: '10px',
+                      border: '1.5px solid #FED7AA',
+                      backgroundColor: '#FFFDF9',
+                      fontSize: '0.88rem',
                       outline: 'none',
                     }}
                   />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery('');
+                        setSearchResults([]);
+                      }}
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#94A3B8',
+                        padding: '4px',
+                      }}
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
               </form>
 
-              {/* Mobile Matching Results */}
+              {/* Mobile Search Results Dropdown */}
               {searchQuery.trim().length > 0 && searchResults.length > 0 && (
                 <div
                   style={{
                     backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    borderRadius: '8px',
+                    border: '1.5px solid #FED7AA',
+                    borderRadius: '10px',
                     marginTop: '8px',
                     overflow: 'hidden',
+                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
                   }}
                 >
                   {searchResults.map((product) => {
@@ -768,25 +946,67 @@ export default function Navbar() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'space-between',
-                          padding: '8px 10px',
+                          padding: '10px 12px',
                           borderBottom: '1px solid #F1F5F9',
+                          gap: '10px',
                         }}
                       >
-                        <div style={{ fontSize: '0.82rem', fontWeight: 600, maxWidth: '170px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {product.name}
-                        </div>
+                        <Link
+                          href={`/shop/${product._id}`}
+                          onClick={() => setMobileMenuOpen(false)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            textDecoration: 'none',
+                            color: 'inherit',
+                            flex: 1,
+                            minWidth: 0,
+                          }}
+                        >
+                          <img
+                            src={product.images?.[0] || '/logo.png'}
+                            alt={product.name}
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              objectFit: 'contain',
+                              borderRadius: '6px',
+                              backgroundColor: '#F8FAFC',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                fontSize: '0.84rem',
+                                fontWeight: 750,
+                                color: '#1E293B',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                              }}
+                            >
+                              {product.name}
+                            </div>
+                            <div style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>
+                              ₹{product.price?.toLocaleString('en-IN')}
+                            </div>
+                          </div>
+                        </Link>
                         <button
                           onClick={(e) => handleQuickAddToCart(e, product)}
                           disabled={isAdded || product.stock <= 0}
                           style={{
-                            backgroundColor: isAdded ? '#DCFCE7' : 'var(--primary-orange)',
-                            color: isAdded ? '#15803D' : '#FFF',
+                            backgroundColor: isAdded ? '#DCFCE7' : '#EA580C',
+                            color: isAdded ? '#15803D' : '#FFFFFF',
                             border: 'none',
-                            padding: '4px 8px',
-                            borderRadius: '4px',
-                            fontSize: '0.74rem',
-                            fontWeight: 700,
+                            padding: '5px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.75rem',
+                            fontWeight: 800,
                             cursor: 'pointer',
+                            flexShrink: 0,
                           }}
                         >
                           {isAdded ? 'Added' : '+ Cart'}
@@ -798,80 +1018,225 @@ export default function Navbar() {
               )}
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {/* Navigation Section Title */}
+            <div
+              style={{
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                color: '#9A3412',
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                marginBottom: '8px',
+                padding: '0 4px',
+              }}
+            >
+              Navigation Links
+            </div>
+
+            {/* 5 Core Navigation Links: Home, Shop, About Us, Track Order, Contact Us */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px' }}>
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 const isContact = link.href === '/contact' || link.isContact;
+                const Icon = link.icon;
+
                 return (
                   <Link
                     key={link.name}
                     href={link.href}
                     onClick={() => setMobileMenuOpen(false)}
                     style={{
-                      padding: '10px 14px',
-                      borderRadius: 'var(--radius-md)',
-                      fontWeight: isContact || isActive ? 800 : 600,
-                      color: isActive ? 'var(--primary-orange)' : isContact ? '#000000' : 'var(--primary-text)',
-                      backgroundColor: isActive ? 'var(--bg-light-orange)' : 'transparent',
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      fontWeight: isActive ? 800 : 700,
+                      color: isActive ? '#FFFFFF' : isContact ? '#000000' : '#1E293B',
+                      backgroundColor: isActive ? '#EA580C' : '#FFFDF9',
+                      border: isActive ? '1px solid #EA580C' : '1px solid #FED7AA',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       textDecoration: 'none',
-                      transition: 'all 0.18s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--bg-light-orange)';
-                      e.currentTarget.style.color = '#EA580C';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = isActive ? 'var(--bg-light-orange)' : 'transparent';
-                      e.currentTarget.style.color = isActive ? 'var(--primary-orange)' : (isContact ? '#000000' : 'var(--primary-text)');
+                      transition: 'all 0.16s ease',
+                      boxShadow: isActive ? '0 4px 12px rgba(234, 88, 12, 0.25)' : 'none',
                     }}
                   >
-                    <span>{link.name}</span>
-                    <ChevronRight size={16} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          borderRadius: '8px',
+                          backgroundColor: isActive ? 'rgba(255, 255, 255, 0.22)' : '#FFF7ED',
+                          color: isActive ? '#FFFFFF' : '#EA580C',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Icon size={17} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.94rem' }}>{link.name}</div>
+                        {link.subtitle && (
+                          <div
+                            style={{
+                              fontSize: '0.72rem',
+                              color: isActive ? '#FFEDD5' : '#64748B',
+                              fontWeight: 500,
+                            }}
+                          >
+                            {link.subtitle}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <ChevronRight size={17} color={isActive ? '#FFFFFF' : '#94A3B8'} />
                   </Link>
                 );
               })}
+            </div>
 
-              {/* Mobile Cart Link */}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setCartDrawerOpen(true);
-                }}
-                style={{
-                  padding: '12px 14px',
-                  borderRadius: 'var(--radius-md)',
-                  backgroundColor: 'var(--bg-light-orange)',
-                  color: 'var(--primary-orange)',
-                  fontWeight: 700,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  border: 'none',
-                  cursor: 'pointer',
-                  width: '100%',
-                  textAlign: 'left',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {/* Mobile Cart Summary Card */}
+            <div
+              style={{
+                backgroundColor: '#FFF7ED',
+                border: '1.5px solid #FED7AA',
+                borderRadius: '12px',
+                padding: '12px 14px',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '8px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div
+                  style={{
+                    width: '34px',
+                    height: '34px',
+                    borderRadius: '8px',
+                    backgroundColor: '#EA580C',
+                    color: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   <ShoppingBag size={18} />
-                  <span>Add to Cart ({cartItemCount} items)</span>
                 </div>
-                <span style={{ fontSize: '0.9rem', fontWeight: 800 }}>
-                  ₹{cartSubtotal.toLocaleString('en-IN')}
-                </span>
-              </button>
+                <div>
+                  <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#1E293B' }}>
+                    Shopping Cart ({cartItemCount} items)
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#EA580C', fontWeight: 800 }}>
+                    Total: ₹{cartSubtotal.toLocaleString('en-IN')}
+                  </div>
+                </div>
+              </div>
 
-              <div style={{ borderTop: '1px solid #E7E5E4', paddingTop: '12px', marginTop: '6px' }}>
-                <div style={{ fontSize: '0.85rem', color: 'var(--secondary-text)', marginBottom: '8px' }}>
-                  Need Assistance?
-                </div>
-                <div style={{ fontWeight: 600, color: 'var(--primary-orange)' }}>+91 95736 53194</div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--secondary-text)' }}>
-                  SSS COMPLEX B-3, Kazipet, Hanumakonda
-                </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    setCartDrawerOpen(true);
+                  }}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #FED7AA',
+                    color: '#EA580C',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    fontWeight: 750,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Open Cart
+                </button>
+                <Link
+                  href="/checkout"
+                  onClick={() => setMobileMenuOpen(false)}
+                  style={{
+                    backgroundColor: '#EA580C',
+                    color: '#FFFFFF',
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    fontSize: '0.78rem',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                  }}
+                >
+                  Checkout →
+                </Link>
+              </div>
+            </div>
+
+            {/* Direct WhatsApp & Call Assistance */}
+            <div
+              style={{
+                borderTop: '1px solid #FED7AA',
+                paddingTop: '14px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px',
+              }}
+            >
+              <div style={{ fontSize: '0.72rem', color: '#9A3412', fontWeight: 800, textTransform: 'uppercase' }}>
+                Showroom Direct Support
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <a
+                  href="https://wa.me/919573653194?text=Hello%20Sri%20Rama%20Cycles,%20I%20need%20support%20with%20a%20bicycle."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    flex: 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    backgroundColor: '#25D366',
+                    color: '#FFFFFF',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <MessageCircle size={16} />
+                  <span>WhatsApp</span>
+                </a>
+
+                <a
+                  href="tel:+919573653194"
+                  style={{
+                    flex: 1,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    backgroundColor: '#FFF7ED',
+                    border: '1.5px solid #FED7AA',
+                    color: '#EA580C',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Phone size={15} />
+                  <span>Call Store</span>
+                </a>
+              </div>
+
+              <div style={{ fontSize: '0.76rem', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MapPin size={13} color="#EA580C" />
+                <span>SSS COMPLEX B-3, Kazipet, Hanumakonda</span>
               </div>
             </div>
           </div>
@@ -1230,6 +1595,16 @@ export default function Navbar() {
             transform: translateX(0);
           }
         }
+        @keyframes slideDownMobile {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -1255,12 +1630,50 @@ export default function Navbar() {
           .desktop-search-container {
             display: block !important;
           }
-          .mobile-hamburger {
+          .desktop-support-btn {
+            display: inline-flex !important;
+          }
+          .mobile-hamburger-btn {
+            display: none !important;
+          }
+          .mobile-nav-drawer {
+            display: none !important;
+          }
+          .mobile-menu-backdrop {
             display: none !important;
           }
         }
         @media (max-width: 899px) {
+          .desktop-nav {
+            display: none !important;
+          }
           .desktop-search-container {
+            display: none !important;
+          }
+          .desktop-support-btn {
+            display: none !important;
+          }
+          .mobile-hamburger-btn {
+            display: flex !important;
+          }
+          .navbar-container {
+            height: 74px !important;
+          }
+          .navbar-logo {
+            height: 48px !important;
+            max-height: 48px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .navbar-container {
+            padding: 0 12px !important;
+            height: 68px !important;
+          }
+          .navbar-logo {
+            height: 42px !important;
+            max-height: 42px !important;
+          }
+          .nav-btn-text {
             display: none !important;
           }
         }
