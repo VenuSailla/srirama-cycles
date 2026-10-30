@@ -67,15 +67,31 @@ function ShopContent() {
 
   // Sync state if URL search query changes
   useEffect(() => {
-    const q = searchParams.get('search');
-    if (q !== null) setSearchTerm(q);
-    const cat = searchParams.get('category');
-    if (cat !== null) setSelectedCategory(cat);
+    const q = searchParams.get('search') || '';
+    setSearchTerm(q);
+    const cat = searchParams.get('category') || 'All';
+    setSelectedCategory(cat);
+    const brand = searchParams.get('brand') || 'All';
+    setSelectedBrand(brand);
+    const sort = searchParams.get('sort') || 'newest';
+    setSortBy(sort);
   }, [searchParams]);
 
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, selectedBrand, priceRange, inStockOnly, sortBy]);
+
+  const handleCategoryChange = (cat) => {
+    setSelectedCategory(cat);
+    const params = new URLSearchParams(searchParams.toString());
+    if (cat && cat !== 'All') {
+      params.set('category', cat);
+    } else {
+      params.delete('category');
+    }
+    const qs = params.toString();
+    router.push(qs ? `/shop?${qs}` : '/shop');
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -127,10 +143,12 @@ function ShopContent() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
             <div>
               <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--primary-text)', letterSpacing: '-0.02em' }}>
-                Bicycle Catalog & Spare Parts
+                {selectedCategory !== 'All' ? selectedCategory : 'Bicycle Catalog & Spare Parts'}
               </h1>
               <p style={{ color: 'var(--secondary-text)', fontSize: '0.95rem' }}>
-                Discover {products.length} models engineered for high speed, off-road durability, and daily comfort.
+                {selectedCategory !== 'All'
+                  ? `Showing all verified ${selectedCategory.toLowerCase()} in our showroom collection.`
+                  : `Discover ${products.length} models engineered for high speed, off-road durability, and daily comfort.`}
               </p>
             </div>
 
@@ -252,7 +270,7 @@ function ShopContent() {
                     return (
                       <button
                         key={cat}
-                        onClick={() => setSelectedCategory(cat)}
+                        onClick={() => handleCategoryChange(cat)}
                         style={{
                           textAlign: 'left',
                           padding: '7px 10px',
@@ -339,6 +357,50 @@ function ShopContent() {
 
           {/* Product Listing Grid */}
           <main>
+            {/* Active Category Filter Chip */}
+            {selectedCategory !== 'All' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--secondary-text)', fontWeight: 600 }}>Filtering by:</span>
+                <button
+                  onClick={() => handleCategoryChange('All')}
+                  title="Remove filter"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    backgroundColor: 'var(--bg-light-orange)',
+                    color: '#EA580C',
+                    border: '1.5px solid var(--border-color)',
+                    padding: '5px 12px',
+                    borderRadius: '9999px',
+                    fontSize: '0.84rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#FED7AA')}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--bg-light-orange)')}
+                >
+                  <span>{selectedCategory}</span>
+                  <X size={14} />
+                </button>
+                <button
+                  onClick={resetAllFilters}
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#64748B',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    background: 'none',
+                    border: 'none',
+                    padding: '4px',
+                  }}
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+
             {loading ? (
               <div
                 style={{

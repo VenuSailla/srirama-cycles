@@ -34,7 +34,8 @@ export async function GET(request) {
     }
 
     if (category && category !== 'All') {
-      query.category = category;
+      const cleanCat = category.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query.category = { $regex: cleanCat, $options: 'i' };
     }
 
     if (brand && brand !== 'All') {

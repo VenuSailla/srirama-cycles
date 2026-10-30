@@ -74,7 +74,7 @@ const defaultSlides = [
     buttonText: 'Shop Ladies & City',
     buttonLink: '/shop?category=Ladies%20Cycles',
     secondaryButtonText: 'City Collection',
-    secondaryButtonLink: '/shop?category=City%20and%20Hybrid%20Bikes',
+    secondaryButtonLink: '/shop?category=City%20%26%20Hybrid%20Cycles',
     imageUrl: '/slider/city-cruiser-bike.jpg',
     tag: 'Family Favorite',
     quote: '“Ride as much or as little, as long or as short as you feel. But ride.”',
