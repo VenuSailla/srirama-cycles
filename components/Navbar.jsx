@@ -176,6 +176,9 @@ export default function Navbar() {
     return null;
   }
 
+  const isShop = pathname === '/shop' || pathname?.startsWith('/shop');
+  const showMobileCart = isShop || cartItemCount > 0;
+
   const navLinks = [
     { name: 'Home', href: '/', icon: Home, subtitle: 'Official Showroom Homepage' },
     { name: 'Shop', href: '/shop', icon: Package, subtitle: 'Bicycles & Auto Spares' },
@@ -581,7 +584,7 @@ export default function Navbar() {
             <button
               onClick={() => setCartDrawerOpen(true)}
               aria-label={`View Shopping Cart (${cartItemCount} items)`}
-              className={`nav-cart-btn ${cartItemCount > 0 ? 'has-items' : ''} ${pathname?.startsWith('/shop') ? 'is-shop-page' : ''} ${cartBounced ? 'cart-pop' : ''}`}
+              className={`nav-cart-btn ${cartItemCount > 0 ? 'has-items' : ''} ${isShop ? 'is-shop-page' : ''} ${showMobileCart ? 'show-mobile-cart' : ''} ${cartBounced ? 'cart-pop' : ''}`}
               style={{
                 position: 'relative',
                 backgroundColor: cartItemCount > 0 ? '#FFF7ED' : 'rgba(249, 115, 22, 0.08)',
@@ -1664,10 +1667,11 @@ export default function Navbar() {
             display: none !important;
           }
           .nav-cart-btn {
-            display: none !important;
+            display: none;
           }
           .nav-cart-btn.has-items,
-          .nav-cart-btn.is-shop-page {
+          .nav-cart-btn.is-shop-page,
+          .nav-cart-btn.show-mobile-cart {
             display: inline-flex !important;
           }
           .mobile-hamburger-btn {

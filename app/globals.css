@@ -312,10 +312,11 @@ input, textarea, select {
 
   /* Show Cart in top navbar on mobile when on shop page OR when items are added to cart */
   .nav-cart-btn {
-    display: none !important;
+    display: none;
   }
   .nav-cart-btn.has-items,
-  .nav-cart-btn.is-shop-page {
+  .nav-cart-btn.is-shop-page,
+  .nav-cart-btn.show-mobile-cart {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -446,7 +447,8 @@ input, textarea, select {
     height: 40px !important;
   }
   .nav-cart-btn.has-items,
-  .nav-cart-btn.is-shop-page {
+  .nav-cart-btn.is-shop-page,
+  .nav-cart-btn.show-mobile-cart {
     height: 40px !important;
     min-width: 40px !important;
     padding: 0 8px !important;
