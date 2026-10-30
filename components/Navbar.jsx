@@ -178,6 +178,7 @@ export default function Navbar() {
       <header style={{ position: 'sticky', top: 0, zIndex: 100, backgroundColor: '#FFFFFF', borderBottom: '1px solid #FED7AA', boxShadow: '0 2px 10px rgba(249, 115, 22, 0.06)' }}>
         {/* Top Announcement Bar - Light Orange & Warm Colors */}
         <div
+          className="top-announcement-bar"
           style={{
             background: 'linear-gradient(90deg, #FFF7ED 0%, #FFEDD5 50%, #FFF7ED 100%)',
             color: '#7C2D12',
@@ -213,7 +214,7 @@ export default function Navbar() {
                   {settings?.phone || '+91 95736 53194'}
                 </a>
               </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <span className="announcement-opening-hours" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
                 <Clock size={13} color="#EA580C" />
                 <span style={{ color: '#7C2D12' }}>
                   {settings?.openingHoursWeekdays || 'Mon-Sat: 9:00 AM - 8:30 PM | Sun: 9:00 AM - 1:00 PM'}
@@ -222,11 +223,11 @@ export default function Navbar() {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <span className="announcement-location" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 <MapPin size={13} color="#EA580C" />
                 <span style={{ color: '#7C2D12' }}>Kazipet, Hanumakonda</span>
               </span>
-              <span style={{ color: '#F97316', fontWeight: 600 }}>•</span>
+              <span className="announcement-location" style={{ color: '#F97316', fontWeight: 600 }}>•</span>
               <Link href="/track-order" style={{ color: '#EA580C', display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none', fontWeight: 700 }}>
                 <Package size={13} />
                 <span>Track Order</span>
@@ -236,25 +237,18 @@ export default function Navbar() {
         </div>
 
         {/* Main Navbar */}
-        <div className="container navbar-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: '86px', padding: '0 16px', gap: '20px' }}>
+        <div className="container navbar-container">
           {/* Official Logo (Enlarged & Crisp) */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
             <img
               src="/logo.png"
               alt="Sri Rama Cycle Store & Auto Spares"
               className="navbar-logo"
-              style={{
-                height: '68px',
-                width: 'auto',
-                maxHeight: '68px',
-                objectFit: 'contain',
-                display: 'block',
-              }}
             />
           </Link>
 
           {/* Desktop Navigation Links: Home, Shop, About Us, Track Order, Contact Us */}
-          <nav style={{ display: 'none', alignItems: 'center', gap: '26px' }} className="desktop-nav">
+          <nav style={{ alignItems: 'center', gap: '26px' }} className="desktop-nav">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               const isContact = link.href === '/contact' || link.isContact;
@@ -571,11 +565,12 @@ export default function Navbar() {
           </div>
 
           {/* Right Action Group: Cart (to Add/Inspect), Sign In, Support ("everthin") */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          <div className="navbar-right-actions">
             {/* "Cart" Pill Button on Navbar (Compact & Sleek) */}
             <button
               onClick={() => setCartDrawerOpen(true)}
               aria-label="View Shopping Cart"
+              className="nav-cart-btn"
               style={{
                 position: 'relative',
                 backgroundColor: 'rgba(249, 115, 22, 0.08)',
@@ -584,7 +579,6 @@ export default function Navbar() {
                 cursor: 'pointer',
                 color: '#EA580C',
                 padding: '6px 12px',
-                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
                 fontWeight: 700,
@@ -630,6 +624,7 @@ export default function Navbar() {
               <Link
                 href="/account"
                 title="View Customer Profile & Orders"
+                className="nav-auth-btn"
                 style={{
                   backgroundColor: '#0F172A',
                   color: '#FFFFFF',
@@ -637,7 +632,6 @@ export default function Navbar() {
                   borderRadius: '9999px',
                   fontSize: '0.88rem',
                   fontWeight: 600,
-                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px',
                   textDecoration: 'none',
@@ -661,6 +655,7 @@ export default function Navbar() {
             ) : pathname !== '/login' ? (
               <Link
                 href="/login"
+                className="nav-auth-btn"
                 style={{
                   backgroundColor: '#0F172A',
                   color: '#FFFFFF',
@@ -668,7 +663,6 @@ export default function Navbar() {
                   borderRadius: '9999px',
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px',
                   textDecoration: 'none',
@@ -688,7 +682,6 @@ export default function Navbar() {
               rel="noopener noreferrer"
               className="desktop-support-btn"
               style={{
-                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '7px',
                 backgroundColor: '#DCFCE7',
@@ -731,19 +724,13 @@ export default function Navbar() {
               aria-expanded={mobileMenuOpen}
               className="mobile-hamburger-btn"
               style={{
-                width: '40px',
-                height: '40px',
                 borderRadius: '10px',
-                display: 'none',
-                alignItems: 'center',
-                justifyContent: 'center',
                 backgroundColor: mobileMenuOpen ? '#EA580C' : '#FFF7ED',
                 color: mobileMenuOpen ? '#FFFFFF' : '#EA580C',
                 border: mobileMenuOpen ? '1.5px solid #EA580C' : '1.5px solid #FED7AA',
                 cursor: 'pointer',
                 boxShadow: '0 2px 6px rgba(249, 115, 22, 0.12)',
                 transition: 'all 0.18s ease',
-                flexShrink: 0,
               }}
             >
               {mobileMenuOpen ? <X size={22} strokeWidth={2.5} /> : <Menu size={22} strokeWidth={2.5} />}
@@ -1623,7 +1610,7 @@ export default function Navbar() {
             transform: translateY(-50%) rotate(360deg);
           }
         }
-        @media (min-width: 900px) {
+        @media (min-width: 768px) {
           .desktop-nav {
             display: flex !important;
           }
@@ -1631,6 +1618,12 @@ export default function Navbar() {
             display: block !important;
           }
           .desktop-support-btn {
+            display: inline-flex !important;
+          }
+          .nav-auth-btn {
+            display: inline-flex !important;
+          }
+          .nav-cart-btn {
             display: inline-flex !important;
           }
           .mobile-hamburger-btn {
@@ -1643,7 +1636,7 @@ export default function Navbar() {
             display: none !important;
           }
         }
-        @media (max-width: 899px) {
+        @media (max-width: 767px) {
           .desktop-nav {
             display: none !important;
           }
@@ -1653,25 +1646,31 @@ export default function Navbar() {
           .desktop-support-btn {
             display: none !important;
           }
+          .nav-auth-btn {
+            display: none !important;
+          }
           .mobile-hamburger-btn {
-            display: flex !important;
+            display: inline-flex !important;
           }
           .navbar-container {
-            height: 74px !important;
-          }
-          .navbar-logo {
-            height: 48px !important;
-            max-height: 48px !important;
-          }
-        }
-        @media (max-width: 480px) {
-          .navbar-container {
-            padding: 0 12px !important;
             height: 68px !important;
+            padding: 0 12px !important;
           }
           .navbar-logo {
             height: 42px !important;
             max-height: 42px !important;
+            max-width: 155px !important;
+          }
+        }
+        @media (max-width: 425px) {
+          .navbar-container {
+            padding: 0 10px !important;
+            height: 64px !important;
+          }
+          .navbar-logo {
+            height: 38px !important;
+            max-height: 38px !important;
+            max-width: 135px !important;
           }
           .nav-btn-text {
             display: none !important;
