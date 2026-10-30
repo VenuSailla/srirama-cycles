@@ -42,6 +42,17 @@ export default function Navbar() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [addedMap, setAddedMap] = useState({});
   const [settings, setSettings] = useState(null);
+  const [cartBounced, setCartBounced] = useState(false);
+
+  const prevCountRef = useRef(cartItemCount);
+  useEffect(() => {
+    if (cartItemCount > prevCountRef.current) {
+      setCartBounced(true);
+      const timer = setTimeout(() => setCartBounced(false), 1200);
+      return () => clearTimeout(timer);
+    }
+    prevCountRef.current = cartItemCount;
+  }, [cartItemCount]);
 
   const searchRef = useRef(null);
   const mobileSearchRef = useRef(null);
@@ -566,15 +577,15 @@ export default function Navbar() {
 
           {/* Right Action Group: Cart (to Add/Inspect), Sign In, Support ("everthin") */}
           <div className="navbar-right-actions">
-            {/* "Cart" Pill Button on Navbar (Compact & Sleek) */}
+            {/* "Cart" Pill Button on Navbar (Visible on desktop & on mobile when on shop page or has items) */}
             <button
               onClick={() => setCartDrawerOpen(true)}
-              aria-label="View Shopping Cart"
-              className="nav-cart-btn"
+              aria-label={`View Shopping Cart (${cartItemCount} items)`}
+              className={`nav-cart-btn ${cartItemCount > 0 ? 'has-items' : ''} ${pathname?.startsWith('/shop') ? 'is-shop-page' : ''} ${cartBounced ? 'cart-pop' : ''}`}
               style={{
                 position: 'relative',
-                backgroundColor: 'rgba(249, 115, 22, 0.08)',
-                border: '1.5px solid #FED7AA',
+                backgroundColor: cartItemCount > 0 ? '#FFF7ED' : 'rgba(249, 115, 22, 0.08)',
+                border: cartItemCount > 0 ? '1.5px solid #EA580C' : '1.5px solid #FED7AA',
                 borderRadius: '9999px',
                 cursor: 'pointer',
                 color: '#EA580C',
@@ -584,7 +595,7 @@ export default function Navbar() {
                 fontWeight: 700,
                 fontSize: '0.86rem',
                 transition: 'all 0.2s ease',
-                boxShadow: '0 1px 3px rgba(249, 115, 22, 0.08)',
+                boxShadow: cartItemCount > 0 ? '0 2px 8px rgba(234, 88, 12, 0.2)' : '0 1px 3px rgba(249, 115, 22, 0.08)',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = '#FFEDD5';
@@ -592,18 +603,19 @@ export default function Navbar() {
                 e.currentTarget.style.transform = 'translateY(-1px)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.08)';
-                e.currentTarget.style.borderColor = '#FED7AA';
+                e.currentTarget.style.backgroundColor = cartItemCount > 0 ? '#FFF7ED' : 'rgba(249, 115, 22, 0.08)';
+                e.currentTarget.style.borderColor = cartItemCount > 0 ? '#EA580C' : '#FED7AA';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
-              <ShoppingBag size={15} strokeWidth={2.4} color="#EA580C" />
+              <ShoppingBag size={17} strokeWidth={2.4} color="#EA580C" />
               <span className="nav-btn-text">Cart</span>
               <span
+                className="nav-cart-badge"
                 style={{
                   backgroundColor: 'var(--primary-orange)',
                   color: '#FFFFFF',
-                  fontSize: '0.68rem',
+                  fontSize: '0.7rem',
                   fontWeight: 800,
                   minWidth: '18px',
                   height: '18px',

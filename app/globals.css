@@ -304,12 +304,46 @@ input, textarea, select {
   .desktop-support-btn {
     display: none !important;
   }
-  /* Requirement 5: Put Cart and Sign In inside the mobile menu */
+  /* Hide Desktop Auth button on mobile */
   .nav-auth-btn {
     display: none !important;
   }
+
+  /* Show Cart in top navbar on mobile when on shop page OR when items are added to cart */
   .nav-cart-btn {
     display: none !important;
+  }
+  .nav-cart-btn.has-items,
+  .nav-cart-btn.is-shop-page {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    padding: 0 10px !important;
+    border-radius: 10px !important;
+    background-color: #FFF7ED !important;
+    border: 1.5px solid #FED7AA !important;
+    color: #EA580C !important;
+    box-shadow: 0 2px 6px rgba(249, 115, 22, 0.12) !important;
+    gap: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .nav-cart-btn.has-items {
+    background-color: #FFEDD5 !important;
+    border-color: #EA580C !important;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.22) !important;
+  }
+
+  /* Hide the text "Cart" on mobile so the button remains a sleek compact icon + badge */
+  .nav-cart-btn .nav-btn-text {
+    display: none !important;
+  }
+
+  .nav-cart-btn.cart-pop {
+    animation: cartBadgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
   }
 
   /* Top Announcement Bar compacting to prevent overflow */
@@ -410,6 +444,12 @@ input, textarea, select {
     width: 40px !important;
     height: 40px !important;
   }
+  .nav-cart-btn.has-items,
+  .nav-cart-btn.is-shop-page {
+    height: 40px !important;
+    min-width: 40px !important;
+    padding: 0 8px !important;
+  }
 }
 
 /* Mobile Drawer Keyframe Animations */
@@ -441,4 +481,17 @@ input, textarea, select {
     transform: translateY(-50%) rotate(360deg);
   }
 }
+
+@keyframes cartBadgePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.22);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 
